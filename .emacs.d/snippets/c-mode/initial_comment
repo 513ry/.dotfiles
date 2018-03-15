@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: initial comment
+# key: /**
+# binding: direct-keybinding
+# --
+/**
+ * $1 $2
+ * @author: $3
+ * @date: $4
+ *
+ * DESCRIPTION:
+ * $5
+ */$0

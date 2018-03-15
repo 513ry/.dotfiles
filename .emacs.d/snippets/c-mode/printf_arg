@@ -1,0 +1,6 @@
+# name: printf_arg
+# -*- mode: snippet -*-
+# key: pr,
+# binding: direct-keybinding
+# --
+printf("%$2", $1);$0

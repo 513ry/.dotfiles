@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: exit
+# key: exi
+# binding: direct-keybinding
+# --
+exit($1);$0

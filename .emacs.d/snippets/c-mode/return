@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: return
+# key: r
+# binding: direct-keybinding
+# --
+return $1;$0

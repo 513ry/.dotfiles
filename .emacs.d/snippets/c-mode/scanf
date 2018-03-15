@@ -1,0 +1,6 @@
+# name: scanf
+# -*- mode: snippet -*-
+# key: sc,
+# binding: direct-keybinding
+# --
+scanf("%$2", $1);$0

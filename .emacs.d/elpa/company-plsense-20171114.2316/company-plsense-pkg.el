@@ -1,0 +1,1 @@
+(define-package "company-plsense" "20171114.2316" "Company backend for Perl" '((company "0.9.3") (cl-lib "0.5.0") (dash "2.12.0") (s "1.12") (emacs "24")) :commit "00f0baa70502b8412627316f72fc8b27ae7a1106" :url "https://github.com/CeleritasCelery/company-plsense")

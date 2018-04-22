@@ -1,7 +1,10 @@
-;;; This .emacs file served for siery <siery@comic.com>
-;; Feel free to use it as you want!
-;;
-;; C-END to see custom key-binidngs.
+;;; .emacs --- My personal dotfile <siery@comic.com>
+;;;
+;;; Commentary:
+;;; Feel free to use it as you want!
+;;; C-END to see custom key-binidngs.
+;;;
+;;; Code:
 
 (setq user-full-name "Siery")
 (setq user-mail-address "siery@comic.com")
@@ -21,6 +24,9 @@
  '(org-agenda-files (quote ("~/Documents/Notes/todo.org")))
  '(org-agenda-restore-windows-after-quit 1)
  '(org-agenda-window-setup 1)
+ '(package-selected-packages
+   (quote
+    (ac-html flycheck-clang-analyzer flymake-css flymake-php flymake-easy inf-ruby ac-php ac-php-core geiser notmuch zerodark-theme yasnippet sexy-monochrome-theme popwin php-mode multi-web-mode mmm-mode log4e helm-swoop gntp geben eslint-fix enh-ruby-mode edit-color-stamp company-plsense cmm-mode circe chess auto-complete-c-headers ac-js2)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
  '(tooltip-mode nil))
@@ -78,15 +84,6 @@
 (require 'auto-complete-config)
 (ac-config-default)
 
-;; auto-complete c headers
-(defun my:ac-c-header-init ()
-  (require 'auto-complete-c-headers)
-  (add-to-list 'ac-sources 'ac-source-c-headers))
-;; hook headers for c/c++
-(add-hook 'c++-mode-hook 'my:ac-c-header-init)
-(add-hook 'c-mode-hook 'my:ac-c-header-init)
-
-
 ;; initialize company
 (require 'company)
 (add-to-list 'company-backends 'company-plsense)
@@ -95,12 +92,78 @@
 
 (add-hook 'after-init-hook 'company-mode)
 
+;;Enable global-linum mode with exeption of shells, text modes etc.
+(define-global-minor-mode my:global-linum-mode global-linum-mode
+  (lambda ()
+    (when (not (memq major-mode
+		     (list 'shell-mode 'org-mode)))
+      (global-linum-mode))))
+(my:global-linum-mode 1)
+
+;; flycheck - flymake
+;(require 'flymake)
+(require 'flycheck)
+(global-flycheck-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Elisp
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; C and C ++
+
+(defun my:c-lang-support ()
+  ;; auto-complete c headers
+  (require 'auto-complete-c-headers)
+  (add-to-list 'ac-sources 'ac-source-c-headers))
+;; hook support for c/c++
+(add-hook 'c++-mode-hook 'my:c-lang-support)
+(add-hook 'c-mode-hook 'my:c-lang-support)
+
+(with-eval-after-load 'flycheck
+  (require 'flycheck-clang-analyzer)
+  (flycheck-clang-analyzer-setup))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; RUBY
+
 (add-to-list 'load-path "(path-to)/Enhanced-Ruby-Mode") ; must be added after any path containing old ruby-mode
 (autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
 (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
+;; inf-ruby REPL
+(autoload 'inf-ruby "inf-ruby" "Run an inferior Ruby process" t)
+(add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
+(add-hook 'compilation-filter-hook 'inf-ruby-auto-enter)
 
-;;; WEB DEVELOPEMENT *************************************************************
+(eval-after-load 'inf-ruby
+  '(define-key inf-ruby-minor-mode-map
+       (kbd "C-c s") 'inf-ruby-console-auto))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; PHP
+
+(require 'php-mode)
+
+(defun my:php-mode-hook ()
+  "My PHP mode configuration."
+  '(define-abbrev php-mode-abbrev-table "ex" "extends"))
+
+(add-hook 'php-mode-hook 'my:php-mode-hook)
+
+;(require 'flymake-php)
+;  (add-hook 'php-mode-hook 'flymake-php-load)
+
+
+;;; WEB DEVELOPEMENT ************************************************
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; CSS
+;(require 'flymake-css)
+;(add-hook 'css-mode-hook 'flymake-css-load)
+
+
 ;; Multi Web Mode
 (require 'multi-web-mode)
 (setq mweb-default-major-mode 'html-mode)
@@ -115,6 +178,17 @@
 ;;
 ;;(setq mmm-global-mode 'maybe)
 ;;(mmm-add-mode-ext-class 'html-mode "\\.php\\'" 'html-php)
+
+;; php auto complete integration
+(add-hook 'php-mode-hook '(lambda ()
+                           (auto-complete-mode t)
+                           (require 'ac-php)
+                           (setq ac-sources  '(ac-source-php ) )
+                           (yas-global-mode 1)
+
+                           (define-key php-mode-map  (kbd "C-]") 'ac-php-find-symbol-at-point)   ;goto define
+                           (define-key php-mode-map  (kbd "C-t") 'ac-php-location-stack-back   ) ;go back
+                           ))
 
 ;; Set JS2 Mode as default
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
@@ -135,14 +209,13 @@
 ;; Debug a simple PHP script.
 ;; Change the session key my-php-54 to any session key text you like
 (defun my-php-debug ()
-  "Run current PHP script for debugging with geben"
+  "Run current PHP script for debugging with geben."
   (interactive)
   (call-interactively 'geben)
   (shell-command
    (concat "XDEBUG_CONFIG='idekey=my-php-7.0' /usr/bin/php7.0 "
 	   (buffer-file-name) " &"))
   )
-(global-set-key [f5] 'my-php-debug)
 
 
 ;; popup windows setup
@@ -170,8 +243,6 @@
 	 (insert (expand-file-name filename)))
 	(t
 	 (insert filename))))
-
-(global-set-key "\C-cr" 'my-insert-file-name)
 
   ;     ;;-----------------------------------------------------------------------------;;..,
 ;( );;;;00;;; HELM SETUP  _________________________________________________________________;;;\
@@ -209,13 +280,19 @@
 
 
 ;;; KEY BANDINGS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;overwrite defaults:
+;; My functions:
+(global-set-key [f5] 'my-php-debug)
+(global-set-key "\C-cr" 'my-insert-file-name)
+;; Overwrite defaults:
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-
-;;helm-swoop:
+(global-set-key (kbd "C-c f") 'ff-find-other-file)
+;; Helm-swoop:
 ;;(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
 ;;(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
 (global-set-key (kbd "M-i") 'helm-swoop)
 (global-set-key (kbd "M-I") 'helm-swoop-back-to-last-point)
 (global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
 (global-set-key (kbd "M-s s") 'helm-multi-swoop-all)
+
+(provide '.emacs)
+;;; .emacs ends here

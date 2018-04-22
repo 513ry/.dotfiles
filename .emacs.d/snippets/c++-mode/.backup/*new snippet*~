@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
 # name: main
 # key: main
+# binding: direct-keybinding
 # --
 int main(int argc, char **argv) {
   $0

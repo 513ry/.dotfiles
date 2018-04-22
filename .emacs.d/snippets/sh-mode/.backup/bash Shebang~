@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: bash Shebang
+# key: #!
+# binding: direct-keybinding
+# --
+#!/bin/bash

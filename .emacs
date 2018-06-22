@@ -86,9 +86,6 @@
  ;; If there is more than one, they won't work right.
  )
 
-(provide 'init.el)
-;;; init,el ends here
-
 ;;; GENERAL LAMBDAS AND FUNCTIONS
 ;; Automaticly switch to sudo mode while opening a file when necessary
 (defadvice find-file (after find-file-sudo activate)

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: php_tag
+# key: <?
+# binding: direct-keybinding
+# --
+<?php
+	$0
+?>

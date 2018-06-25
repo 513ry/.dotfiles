@@ -1,1 +1,1 @@
-("~/hak/Ruby/mazeing/")
+("/var/www/html/ColonyIn.Space/" "~/git/articleswall/" "/var/www/html/nobobox/" "~/hak/Ruby/mazeing/")

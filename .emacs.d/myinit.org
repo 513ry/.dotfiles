@@ -1,6 +1,6 @@
 #+SEQ_TODO:  Error(e) Warring(w) | Correct(c)
 
-## init.el - configuration file for emacs
+* init.el - configuration file for emacs
 Hey! This is my personal emacs configuration. It needs
 babel-eval to run correctly. All other packages will be
 auto installed. Please run this together with .emacs file
